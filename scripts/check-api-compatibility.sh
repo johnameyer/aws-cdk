@@ -55,6 +55,10 @@ if ! ${SKIP_DOWNLOAD:-false}; then
 
     echo "Determining baseline version..." >&2
     version=$(node -p 'require("./scripts/resolve-version.js").version')
+
+    # Strip RC suffix if present
+    version=${version%%-rc.*}
+
     echo "  Current version is $version." >&2
     echo "Using version '$version' as the baseline..."
 
@@ -68,7 +72,8 @@ if ! ${SKIP_DOWNLOAD:-false}; then
     mkdir -p $tmpdir
 
     echo "Installing from NPM..." >&2
-    # use npm7 to automatically install peer dependencies
+    # Use npm7 instead of whatever the current NPM version is to make sure we
+    # automatically install peer dependencies
     (cd $tmpdir && npx npm@^7.0.0 install --prefix $tmpdir $install_versions)
 fi
 
